@@ -1,0 +1,22 @@
+- name: set up web applications
+  hosts: win2016
+  vars:
+    iis_site: "Default Web Site"
+    prefix: "Api."
+  vars_files:
+    variables.yml
+  tasks:
+  - name: Create directory structure for api
+    win_file:
+      path: "{{ item.value.api_path }}"
+      state: directory
+    loop: "{{ lookup('dict', apps) }}"
+
+  - name: Create web applications
+    win_iis_webapplication:
+      application_pool: "{{ item.value.pool }}"
+      name: "{{ prefix }}{{ item.key }}"
+      site: "{{ iis_site }}"
+      state: present
+      physical_path: "{{ item.value.api_path }}"
+    loop: "{{ lookup('dict', apps) }}"

@@ -1,0 +1,37 @@
+- name: install dotnet devpack
+  hosts: win2016
+  vars:
+  tasks:
+  - name: Create directory structure
+    win_file:
+      path: "{{ item }}"
+      state: directory
+    with_items:
+      - C:\download
+
+  - name: dotnet 4.8 sdk step (1) check if installed
+    win_command: pwsh.exe -
+    args:
+      stdin: (Get-ChildItem 'HKLM:\SOFTWARE\Microsoft\NET Framework Setup\NDP\v4\Full\' | Get-ItemPropertyValue -Name Release | select -First 1) -ge 528040
+    register: sdk_installed
+
+  - name: dotnet 4.8 sdk step (2) download
+    win_get_url:
+      url: "https://download.visualstudio.microsoft.com/download/pr/7afca223-55d2-470a-8edc-6a1739ae3252/c8c829444416e811be84c5765ede6148/ndp48-devpack-enu.exe"
+      dest: C:\download\ndp48-devpack.exe
+    when: sdk_installed.stdout_lines[0]|bool == false
+
+  - name: dotnet 4.8 sdk step (3) Install
+    win_shell: C:\download\ndp48-devpack.exe /q /norestart
+    when: sdk_installed.stdout_lines[0]|bool == false
+    register: install_result
+    
+  - name: Reboot when required
+    win_reboot:
+    when: install_result.stdout != ""
+
+  - name: Install vs2017 build tools
+    win_chocolatey:
+      name: visualstudio2017buildtools
+      version: 15.9.11.0
+      state: present

@@ -1,0 +1,47 @@
+- name: configure iis windows authentication
+  hosts: win2016
+  vars:
+    cmd_path: C:\Windows\System32\inetsrv\appcmd.exe
+    cmd_section: "-section:system.webServer/security/authentication/"
+    
+  vars_files:
+    variables.yml  
+  tasks:
+  - name: Install IIS roles, features with sub features and management tools
+    win_feature:
+      name: Web-Server, Web-Common-Http, Web-Http-Redirect, Web-Includes, Web-DAV-Publishing, Web-Default-Doc, Web-Dir-Browsing, Web-Http-Errors, Web-Static-Content, Web-Health, Web-Request-Monitor, Web-Http-Tracing, Web-Http-Logging, Web-Custom-Logging, Web-Log-Libraries, Web-ODBC-Logging, Web-Performance, Web-Stat-Compression, Web-Dyn-Compression, Web-Security, Web-IP-Security, Web-Filtering, Web-Basic-Auth, Web-Client-Auth, Web-Digest-Auth, Web-Cert-Auth, Web-Url-Auth, Web-Windows-Auth, Web-App-Dev, Web-Net-Ext45, Web-AppInit, Web-ASP, Web-Asp-Net45, Web-CertProvider, Web-ISAPI-Ext, Web-ISAPI-Filter, Web-WebSockets
+      state: present
+      restart: no
+      include_management_tools: True 
+    register: win_feature
+
+  - name: reboot if insatlling web-server feature requires item
+    win_reboot:
+    when: win_feature.reboot_required
+ 
+  - name: Anonymous Authentication Disabled
+    win_command: '"{{ cmd_path }}" set config "Default Web Site/Api.{{ item.key }}" {{ cmd_section }}anonymousAuthentication /enabled:"False" /commit:apphost'
+    loop: "{{ lookup('dict', apps)}}"
+    
+  - name: Windows Authenication Enabled
+    win_command: '"{{ cmd_path }}" set config "Default Web Site/Api.{{ item.key }}" {{ cmd_section }}windowsAuthentication /enabled:True /commit:apphost'
+    loop: "{{ lookup('dict', apps) }}"
+
+ # - name: ASP.NET Impersonation Disabled: DEFAULT IN IIS
+ 
+ # - name: Basic Authentication Disabled: DEFAULT IN IIS
+
+ # - name: Digest Authentication Disabled: DEFAULT IN IIS
+ 
+ # - name: Forms Authentication Disabled: DEFAULT IN IIS
+ 
+
+          
+                   
+          
+                    
+          
+          
+                            
+          
+          

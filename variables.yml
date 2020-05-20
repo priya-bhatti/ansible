@@ -1,0 +1,60 @@
+api_dir: D:/IIS/Api/Api.
+api_dir_test: D:/IIS/ApiTest/ApiTest.
+client_dir: D:/IIS/Client/Client.
+client_dir_test: D:/IIS/ClientTest/ClientTest.
+list_of_pools: [Test, ExtractorApi, MrpWebApi, CwtDataEntryApi, MrpArchiveApi, StreamNarrativeApi]
+list_of_apps: [CwtDataEntry, DataExtractor, MrpWeb, MrpArchive]
+apps:
+  CwtDataEntry:
+    client_path: "{{ client_dir }}CwtDataEntry"
+    api_path: "{{ api_dir }}CwtDataEntry"
+    pool: CwtDataEntryApi
+  DataExtractor:
+    client_path: "{{ client_dir }}DataExtractor"
+    api_path: "{{ api_dir }}DataExtractor"
+    pool: ExtractorApi
+  Nuseds.Query:
+    client_path: "{{ client_dir }}DataExtractor"
+    api_path: "{{ api_dir }}DataExtractor"
+    pool: ExtractorApi
+  Epad.Query:
+    client_path: "{{ client_dir }}DataExtractor"
+    api_path: "{{ api_dir }}DataExtractor"
+    pool: ExtractorApi
+  MrpWeb:
+    client_path: "{{ client_dir }}MrpWeb"
+    api_path: "{{ api_dir }}MrpWeb"
+    pool: MrpWebApi
+  MrpArchive:
+    client_path: "{{ client_dir }}MrpArchive"
+    api_path: "{{ api_dir }}MrpArchive"
+    pool: MrpArchiveApi
+  CwtDataEntry.Test:
+    client_path: "{{ client_dir_test }}CwtDataEntry"
+    api_path: "{{ api_dir_test }}CwtDataEntry"
+    pool: Test
+  DataExtractor.Test:
+    client_path: "{{ client_dir_test }}DataExtractor"
+    api_path: "{{ api_dir_test }}DataExtractor"
+    pool: Test
+  Nuseds.Query.Test:
+    client_path: "{{ client_dir_test }}DataExtractor"
+    api_path: "{{ api_dir_test }}DataExtractor"
+    pool: Test
+  Epad.Query.Test:
+    client_path: "{{ client_dir_test }}DataExtractor"
+    api_path: "{{ api_dir_test }}DataExtractor"
+    pool: Test
+  MrpWeb.Test:
+    client_path: "{{client_dir_test }}MrpWeb"
+    api_path: "{{ api_dir_test }}MrpWeb"
+    pool: Test
+  MrpArchive.Test:
+    client_path: "{{ client_dir_test }}MrpArchive"
+    api_path: "{{ api_dir_test }}MrpArchive"
+    pool: Test
+
+
+  
+  
+  

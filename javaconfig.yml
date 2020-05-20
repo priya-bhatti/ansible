@@ -1,0 +1,16 @@
+- name: set up java and tomcat
+  hosts: win2016
+  vars:
+  tasks:
+  - name: configure jre
+    win_chocolatey:
+      name: jre8
+      version: 8.0.211
+      state: present
+
+  - name: configure tomcat
+    win_chocolatey:
+     name: tomcat
+     version: 9.0.20
+     state: present
+

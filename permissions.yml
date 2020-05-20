@@ -1,0 +1,41 @@
+ - name: set up read/write permissions on folders and application pools
+   hosts: win2016
+   vars:
+    api: D:/IIS/Api/
+    api_test: D:/IIS/ApiTest/
+    read_rights: "Read, ReadAndExecute"
+    iis_user: "IIS APPPOOL\\"
+   vars_files:
+    variables.yml
+   tasks:
+   - name: read and execute rights to ApiTest
+     win_acl:
+       path: "{{ api_test }}"
+       inherit: ContainerInherit, ObjectInherit
+       propagation: None
+       rights: "{{read_rights}}"
+       state: present
+       type: allow
+       user: "{{ iis_user }}Test"
+
+   - name: read and execute rights to Api 
+     win_acl:
+       path: "{{ api }}"
+       inherit: ContainerInherit, ObjectInherit
+       propagation: None
+       rights: "{{read_rights}}"
+       state: present
+       type: allow
+       user: "{{ iis_user }}{{ item }}"
+     loop: "{{ list_of_pools | reject('search', 'Test') | list }}"
+
+   - name: write permissions to log folders 
+     win_acl:
+       path: "{{ item.value.api_path }}/log"
+       inherit: ContainerInherit, ObjectInherit
+       propagation: None
+       rights: Write
+       state: present
+       type: allow
+       user: "{{ iis_user }}{{ item.value.pool }}"
+     loop:  "{{ lookup('dict', apps) }}"

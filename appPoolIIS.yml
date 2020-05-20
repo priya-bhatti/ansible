@@ -1,0 +1,15 @@
+- name: set up application pools
+  hosts: win2016
+  vars:
+    runtime_v: "v4.0"
+  vars_files:
+    variables.yml
+  tasks:
+  - name: create application pools loop
+    win_iis_webapppool:
+      name: "{{ item }}"
+      state: started
+      attributes:
+        managedRuntimeVersion: "{{ runtime_v }}"
+    loop: "{{ list_of_pools }}"
+                

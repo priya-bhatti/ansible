@@ -1,0 +1,20 @@
+- name: set up virtual directories
+  hosts: win2016
+  vars:
+    iis_site: "Default Web Site"
+  vars_files:
+    variables.yml
+  tasks:
+  - name: Create directory structure for client apps
+    win_file:
+      path: "{{ item.value.client_path }}"
+      state: directory
+    loop: "{{ lookup('dict', apps) }}"
+
+  - name: Create virtual directories
+    win_iis_virtualdirectory:
+      name: "{{ item.key }}"
+      site: "{{ iis_site }}"
+      state: present
+      physical_path: "{{ item.value.client_path }}"
+    loop: "{{ lookup('dict', apps) }}"
